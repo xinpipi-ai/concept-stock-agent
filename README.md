@@ -1,70 +1,69 @@
-# Concept Stock Agent
+# 概念选股多智能体（Concept Stock Agent）
 
-![Concept Stock Agent cover](./assets/project-cover.svg)
+![概念选股封面](./assets/project-cover.svg)
 
-A runnable multi-agent stock selection project for theme and concept investing.
+这是一个围绕“概念主题投资”设计的多智能体选股项目。它参考华泰金工研报《大模型概念与宏观热点选股》的思路，把概念输入、产业链拆解、候选股票扩展、证据评审和组合构建串成一条可本地运行的完整流程。
 
-This project recreates the "concept stock selection" idea from the Huatai research note 《大模型概念与宏观热点选股》 and turns it into a local Python workflow. You give it a concept such as `AI算力` or `AI芯片`, and it builds an investable stock basket with rationale plus a simple backtest.
+## 项目定位
 
-## What It Does
+给定一个概念主题，例如 `AI算力`、`AI芯片`，系统会：
 
-- Takes a concept name as input
-- Maps the concept to a Tushare concept board
-- Breaks the theme into industry-chain nodes
-- Lets multiple agents expand stock candidates in parallel
-- Reviews evidence across nodes and builds a final portfolio
-- Runs an equal-weight backtest against CSI 300
+- 自动匹配 Tushare 概念板块
+- 将主题拆成产业链节点
+- 并行扩展每个节点的候选股票
+- 汇总证据并构建最终组合
+- 对组合做简单等权回测
 
-## Why This Project Is Interesting
+## 为什么这个项目值得展示
 
-- It is not just a prompt demo. The pipeline is executable end to end.
-- The output is structured enough to inspect, reuse, and backtest.
-- It turns a sell-side research idea into a local research tool.
-- The system is simple enough to run, but modular enough to extend.
+- 它不是单纯的 Prompt 演示，而是可跑通的完整流程
+- 输出结果是结构化的，便于检查、复盘和继续迭代
+- 它把卖方研究思路转成了本地研究工具
+- 结构清晰，后续很容易扩展成更强的研究系统
 
-## Architecture Diagram
+## 架构图
 
 ```mermaid
 flowchart LR
-    A["Input Concept<br/>AI算力 / AI芯片"] --> B["planner<br/>define research task"]
-    B --> C["chain_analyzer<br/>break concept into industry-chain nodes"]
-    C --> D1["node_expander<br/>upstream node ideas"]
-    C --> D2["node_expander<br/>midstream node ideas"]
-    C --> D3["node_expander<br/>downstream node ideas"]
-    D1 --> E["evidence_reviewer<br/>merge and score evidence"]
+    A["概念输入<br/>AI算力 / AI芯片"] --> B["规划器<br/>确定研究目标"]
+    B --> C["链路分析器<br/>拆解产业链节点"]
+    C --> D1["节点扩展器<br/>上游候选股"]
+    C --> D2["节点扩展器<br/>中游候选股"]
+    C --> D3["节点扩展器<br/>下游候选股"]
+    D1 --> E["证据评审器<br/>汇总与打分"]
     D2 --> E
     D3 --> E
-    E --> F["portfolio_builder<br/>build final basket"]
-    F --> G["JSON output + equal-weight backtest"]
+    E --> F["组合构建器<br/>生成最终组合"]
+    F --> G["JSON 输出 + 等权回测"]
 ```
 
-## Pipeline
+## 流程说明
 
-1. `planner` turns the raw concept into a research objective.
-2. `chain_analyzer` decomposes the theme into investable industry-chain nodes.
-3. `node_expander` runs in parallel to collect candidate stocks and rationales per node.
-4. `evidence_reviewer` reconciles overlap, filters weak ideas, and scores candidates.
-5. `portfolio_builder` creates the final basket and hands it to the backtest step.
+1. `planner` 把原始概念转成明确的研究任务。
+2. `chain_analyzer` 将主题拆解成可投资的产业链节点。
+3. `node_expander` 并行扩展每个节点的候选股票和理由。
+4. `evidence_reviewer` 汇总证据、去重、过滤弱逻辑。
+5. `portfolio_builder` 生成最终组合并进入回测环节。
 
-## Stack
+## 技术栈
 
 - `Python`
-- `Tushare` for concept matching, constituents, and market data
-- `DeepSeek` for agent reasoning
-- Local JSON artifacts for reproducible outputs
+- `Tushare`：概念匹配、成分股、行情数据
+- `DeepSeek`：多智能体推理
+- 本地 JSON 工件：用于保存可复查结果
 
-## Repository Structure
+## 目录结构
 
 ```text
-agents/      agent implementations for planning, expansion, review, and portfolio building
-data/        Tushare + model clients
-run.py       CLI entry point
-graph.py     pipeline orchestration
-backtest.py  equal-weight backtest utilities
-config.py    model, token, and strategy parameters
+agents/      多智能体模块
+data/        Tushare 与模型客户端
+run.py       命令行入口
+graph.py     流程编排
+backtest.py  等权回测逻辑
+config.py    模型与策略参数
 ```
 
-## Setup
+## 安装
 
 ```bash
 cd "/Users/xinwei/Desktop/my show/concept_stock_agent"
@@ -73,67 +72,69 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-Create a local `.env` file:
+## 环境变量
+
+请在本地创建 `.env`：
 
 ```bash
 TUSHARE_TOKEN=your_tushare_token
 DEEPSEEK_API_KEY=your_deepseek_key
 ```
 
-## Usage
+## 使用方式
 
 ```bash
-# Basic usage: pass a concept name and auto-match a Tushare concept board
+# 基本用法：输入概念名，自动匹配 Tushare 概念板块
 python run.py "AI算力"
 
-# Provide a Tushare concept code directly
+# 手动指定 Tushare 概念代码
 python run.py "AI算力" --concept-code TS0001
 
-# Run the stock-selection pipeline only
+# 只跑选股流程，不做回测
 python run.py "AI算力" --skip-backtest
 
-# Customize the backtest window
+# 自定义回测区间
 python run.py "AI算力" --backtest-start 20250101 --backtest-end 20260414
 ```
 
-## Output
+## 输出结果
 
-Each run generates a JSON file under `outputs/` with:
+每次运行会在 `outputs/` 下生成一份 JSON，通常包含：
 
-- Planning result
-- Industry-chain decomposition
-- Stock ideas by node
-- Review comments and final selection logic
-- Final portfolio
+- 研究计划
+- 产业链拆解结果
+- 各节点股票推荐与理由
+- 评审意见
+- 最终组合
 
-The CLI also prints the selected basket and, unless skipped, a backtest summary.
+命令行界面会同时打印选出的股票以及回测摘要。
 
-## Configurable Parameters
+## 关键参数
 
-Main knobs live in `config.py`:
+主要参数位于 `config.py`：
 
-- `CHAIN_MIN_NODES` / `CHAIN_MAX_NODES`: number of chain nodes
-- `STOCKS_PER_NODE_MIN` / `STOCKS_PER_NODE_MAX`: candidates per node
-- `PORTFOLIO_MAX_SIZE`: final portfolio cap
-- `BENCHMARK`: backtest benchmark, default `000300.SH`
-- `DEEPSEEK_MODEL`: reasoning model, default `deepseek-chat`
+- `CHAIN_MIN_NODES` / `CHAIN_MAX_NODES`：产业链节点数
+- `STOCKS_PER_NODE_MIN` / `STOCKS_PER_NODE_MAX`：每个节点的候选股票数
+- `PORTFOLIO_MAX_SIZE`：最终组合上限
+- `BENCHMARK`：回测基准，默认 `000300.SH`
+- `DEEPSEEK_MODEL`：推理模型，默认 `deepseek-chat`
 
-## Switching Model Providers
+## 模型切换
 
-The project is currently configured for DeepSeek, but the client layer is simple enough to swap.
+项目默认使用 DeepSeek，但模型层比较容易替换。
 
-For example, you can point the model settings in `config.py` to a Claude-compatible endpoint:
+例如，你可以把 `config.py` 改成 Claude 兼容端点：
 
 ```python
 DEEPSEEK_BASE_URL = "https://api.anthropic.com/v1"
 DEEPSEEK_MODEL = "claude-sonnet-4-6"
 ```
 
-Then replace the API key in `.env`.
+然后在 `.env` 中换成对应的 Key 即可。
 
-## Roadmap Ideas
+## 后续可扩展方向
 
-- Add richer evaluation metrics beyond equal-weight backtests
-- Save intermediate agent traces as separate artifacts
-- Compare multiple concepts in batch mode
-- Support alternative data sources beyond Tushare
+- 引入更丰富的绩效评估指标
+- 保存中间 Agent 推理轨迹
+- 支持多个概念批量比较
+- 接入更多数据源而不仅仅是 Tushare
