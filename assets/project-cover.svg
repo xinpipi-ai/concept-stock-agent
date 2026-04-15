@@ -9,17 +9,20 @@
   <text x="86" y="230" fill="#BAE0FF" font-size="30" font-family="'PingFang SC','Microsoft YaHei',Arial,Helvetica,sans-serif" font-weight="600">概念选股多智能体</text>
   <text x="86" y="272" fill="#D5E2FF" font-size="26" font-family="'PingFang SC','Microsoft YaHei',Arial,Helvetica,sans-serif">把概念主题拆成产业链节点，扩展候选股票，</text>
   <text x="86" y="308" fill="#D5E2FF" font-size="26" font-family="'PingFang SC','Microsoft YaHei',Arial,Helvetica,sans-serif">再生成组合与回测结果</text>
-  <rect x="86" y="352" width="190" height="64" rx="18" fill="#11284A"/>
-  <rect x="298" y="352" width="190" height="64" rx="18" fill="#11284A"/>
-  <rect x="510" y="352" width="190" height="64" rx="18" fill="#11284A"/>
-  <text x="181" y="392" text-anchor="middle" fill="#F7FAFF" font-size="24" font-family="'PingFang SC','Microsoft YaHei',Arial,Helvetica,sans-serif" font-weight="700">Planner</text>
-  <text x="393" y="392" text-anchor="middle" fill="#F7FAFF" font-size="24" font-family="'PingFang SC','Microsoft YaHei',Arial,Helvetica,sans-serif" font-weight="700">Chain Analyzer</text>
-  <text x="605" y="392" text-anchor="middle" fill="#F7FAFF" font-size="24" font-family="'PingFang SC','Microsoft YaHei',Arial,Helvetica,sans-serif" font-weight="700">Node Expander</text>
+  <rect x="86" y="340" width="190" height="88" rx="18" fill="#11284A"/>
+  <rect x="298" y="340" width="190" height="88" rx="18" fill="#11284A"/>
+  <rect x="510" y="340" width="190" height="88" rx="18" fill="#11284A"/>
+  <text x="181" y="376" text-anchor="middle" fill="#F7FAFF" font-size="24" font-family="'PingFang SC','Microsoft YaHei',Arial,Helvetica,sans-serif" font-weight="700">Planner</text>
+  <text x="181" y="405" text-anchor="middle" fill="#D5E2FF" font-size="16" font-family="'PingFang SC','Microsoft YaHei',Arial,Helvetica,sans-serif">确定研究目标</text>
+  <text x="393" y="376" text-anchor="middle" fill="#F7FAFF" font-size="24" font-family="'PingFang SC','Microsoft YaHei',Arial,Helvetica,sans-serif" font-weight="700">Chain Analyzer</text>
+  <text x="393" y="405" text-anchor="middle" fill="#D5E2FF" font-size="16" font-family="'PingFang SC','Microsoft YaHei',Arial,Helvetica,sans-serif">拆解产业链节点</text>
+  <text x="605" y="376" text-anchor="middle" fill="#F7FAFF" font-size="24" font-family="'PingFang SC','Microsoft YaHei',Arial,Helvetica,sans-serif" font-weight="700">Node Expander</text>
+  <text x="605" y="405" text-anchor="middle" fill="#D5E2FF" font-size="16" font-family="'PingFang SC','Microsoft YaHei',Arial,Helvetica,sans-serif">扩展候选股票</text>
   <path d="M276 384H298" stroke="#99BEFF" stroke-width="6" stroke-linecap="round"/>
   <path d="M488 384H510" stroke="#99BEFF" stroke-width="6" stroke-linecap="round"/>
   <rect x="722" y="332" width="358" height="116" rx="22" fill="#0E223F" stroke="#85B2FF" stroke-opacity="0.55"/>
   <text x="752" y="378" fill="#F7FAFF" font-size="24" font-family="'PingFang SC','Microsoft YaHei',Arial,Helvetica,sans-serif" font-weight="700">Review + Build</text>
-  <text x="752" y="414" fill="#D5E2FF" font-size="22" font-family="'PingFang SC','Microsoft YaHei',Arial,Helvetica,sans-serif">证据打分、合并重复、生成最终组合</text>
+  <text x="752" y="414" fill="#D5E2FF" font-size="18" font-family="'PingFang SC','Microsoft YaHei',Arial,Helvetica,sans-serif">证据打分、合并重复、生成最终组合</text>
   <rect x="86" y="486" width="314" height="54" rx="16" fill="#F4F8FF"/>
   <text x="243" y="520" text-anchor="middle" fill="#0A1325" font-size="22" font-family="'PingFang SC','Microsoft YaHei',Arial,Helvetica,sans-serif" font-weight="700">Python  •  Tushare  •  DeepSeek</text>
   <text x="86" y="575" fill="#D5E2FF" font-size="20" font-family="'PingFang SC','Microsoft YaHei',Arial,Helvetica,sans-serif">从概念输入到 JSON 结果与等权回测</text>
