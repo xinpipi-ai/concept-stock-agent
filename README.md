@@ -1,5 +1,7 @@
 # Concept Stock Agent
 
+![Concept Stock Agent cover](./assets/project-cover.svg)
+
 A runnable multi-agent stock selection project for theme and concept investing.
 
 This project recreates the "concept stock selection" idea from the Huatai research note 《大模型概念与宏观热点选股》 and turns it into a local Python workflow. You give it a concept such as `AI算力` or `AI芯片`, and it builds an investable stock basket with rationale plus a simple backtest.
