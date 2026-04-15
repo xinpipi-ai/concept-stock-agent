@@ -1,64 +1,123 @@
 # Concept Stock Agent
 
-基于华泰金工研报《大模型概念与宏观热点选股》的多智能体概念选股复现。
+A runnable multi-agent stock selection project for theme and concept investing.
 
-## 架构
+This project recreates the "concept stock selection" idea from the Huatai research note 《大模型概念与宏观热点选股》 and turns it into a local Python workflow. You give it a concept such as `AI算力` or `AI芯片`, and it builds an investable stock basket with rationale plus a simple backtest.
 
+## What It Does
+
+- Takes a concept name as input
+- Maps the concept to a Tushare concept board
+- Breaks the theme into industry-chain nodes
+- Lets multiple agents expand stock candidates in parallel
+- Reviews evidence across nodes and builds a final portfolio
+- Runs an equal-weight backtest against CSI 300
+
+## Why This Project Is Interesting
+
+- It is not just a prompt demo. The pipeline is executable end to end.
+- The output is structured enough to inspect, reuse, and backtest.
+- It turns a sell-side research idea into a local research tool.
+- The system is simple enough to run, but modular enough to extend.
+
+## Pipeline
+
+```text
+planner
+  -> chain_analyzer
+  -> node_expander (parallel by industry-chain node)
+  -> evidence_reviewer
+  -> portfolio_builder
 ```
-planner → chain_analyzer → node_expander (并行) → evidence_reviewer → portfolio_builder
+
+## Stack
+
+- `Python`
+- `Tushare` for concept matching, constituents, and market data
+- `DeepSeek` for agent reasoning
+- Local JSON artifacts for reproducible outputs
+
+## Repository Structure
+
+```text
+agents/      agent implementations for planning, expansion, review, and portfolio building
+data/        Tushare + model clients
+run.py       CLI entry point
+graph.py     pipeline orchestration
+backtest.py  equal-weight backtest utilities
+config.py    model, token, and strategy parameters
 ```
 
-- **数据源**: Tushare（替代报告中的 Gangtise RAG）
-- **大模型**: DeepSeek（先便宜跑通，后续可切 Claude）
-- **输出**: 月度概念股组合 + 回测
-
-## 安装
+## Setup
 
 ```bash
-cd "/Users/xinwei/Desktop/my show /concept_stock_agent"
+cd "/Users/xinwei/Desktop/my show/concept_stock_agent"
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-## 使用
+Create a local `.env` file:
 
 ```bash
-# 基本用法：传入概念名，自动匹配 Tushare 概念板块
+TUSHARE_TOKEN=your_tushare_token
+DEEPSEEK_API_KEY=your_deepseek_key
+```
+
+## Usage
+
+```bash
+# Basic usage: pass a concept name and auto-match a Tushare concept board
 python run.py "AI算力"
 
-# 指定 Tushare 概念代码（跳过模糊匹配）
+# Provide a Tushare concept code directly
 python run.py "AI算力" --concept-code TS0001
 
-# 跳过回测（只跑选股）
+# Run the stock-selection pipeline only
 python run.py "AI算力" --skip-backtest
 
-# 自定义回测区间
+# Customize the backtest window
 python run.py "AI算力" --backtest-start 20250101 --backtest-end 20260414
 ```
 
-## 输出
+## Output
 
-每次运行会在 `outputs/` 下生成一份 JSON：
-- 研究计划
-- 产业链拆解
-- 每个节点的股票推荐及理由
-- 评审结论
-- 最终组合
+Each run generates a JSON file under `outputs/` with:
 
-## 配置
+- Planning result
+- Industry-chain decomposition
+- Stock ideas by node
+- Review comments and final selection logic
+- Final portfolio
 
-`config.py` 中可调参数：
-- `CHAIN_MIN/MAX_NODES`: 产业链环节数（默认 4-8）
-- `STOCKS_PER_NODE_MIN/MAX`: 每环节股票数（默认 5-10）
-- `PORTFOLIO_MAX_SIZE`: 最终组合容量（默认 30）
-- `BENCHMARK`: 回测基准（默认沪深300）
+The CLI also prints the selected basket and, unless skipped, a backtest summary.
 
-## 升级到 Claude
+## Configurable Parameters
 
-改 `config.py`：
+Main knobs live in `config.py`:
+
+- `CHAIN_MIN_NODES` / `CHAIN_MAX_NODES`: number of chain nodes
+- `STOCKS_PER_NODE_MIN` / `STOCKS_PER_NODE_MAX`: candidates per node
+- `PORTFOLIO_MAX_SIZE`: final portfolio cap
+- `BENCHMARK`: backtest benchmark, default `000300.SH`
+- `DEEPSEEK_MODEL`: reasoning model, default `deepseek-chat`
+
+## Switching Model Providers
+
+The project is currently configured for DeepSeek, but the client layer is simple enough to swap.
+
+For example, you can point the model settings in `config.py` to a Claude-compatible endpoint:
+
 ```python
-DEEPSEEK_BASE_URL = "https://api.anthropic.com/v1"  # 或 Claude 兼容端点
+DEEPSEEK_BASE_URL = "https://api.anthropic.com/v1"
 DEEPSEEK_MODEL = "claude-sonnet-4-6"
 ```
-并在 `.env` 替换 key。
+
+Then replace the API key in `.env`.
+
+## Roadmap Ideas
+
+- Add richer evaluation metrics beyond equal-weight backtests
+- Save intermediate agent traces as separate artifacts
+- Compare multiple concepts in batch mode
+- Support alternative data sources beyond Tushare
