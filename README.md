@@ -20,15 +20,29 @@ This project recreates the "concept stock selection" idea from the Huatai resear
 - It turns a sell-side research idea into a local research tool.
 - The system is simple enough to run, but modular enough to extend.
 
+## Architecture Diagram
+
+```mermaid
+flowchart LR
+    A["Input Concept<br/>AI算力 / AI芯片"] --> B["planner<br/>define research task"]
+    B --> C["chain_analyzer<br/>break concept into industry-chain nodes"]
+    C --> D1["node_expander<br/>upstream node ideas"]
+    C --> D2["node_expander<br/>midstream node ideas"]
+    C --> D3["node_expander<br/>downstream node ideas"]
+    D1 --> E["evidence_reviewer<br/>merge and score evidence"]
+    D2 --> E
+    D3 --> E
+    E --> F["portfolio_builder<br/>build final basket"]
+    F --> G["JSON output + equal-weight backtest"]
+```
+
 ## Pipeline
 
-```text
-planner
-  -> chain_analyzer
-  -> node_expander (parallel by industry-chain node)
-  -> evidence_reviewer
-  -> portfolio_builder
-```
+1. `planner` turns the raw concept into a research objective.
+2. `chain_analyzer` decomposes the theme into investable industry-chain nodes.
+3. `node_expander` runs in parallel to collect candidate stocks and rationales per node.
+4. `evidence_reviewer` reconciles overlap, filters weak ideas, and scores candidates.
+5. `portfolio_builder` creates the final basket and hands it to the backtest step.
 
 ## Stack
 
